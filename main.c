@@ -56,7 +56,7 @@ void test3(){
 void gaussian_elimination(){
     int row, under_row, column, max_row;
     double temp;
-    #pragma omp parallel num_threads(2) private(row, under_row, column, max_row) shared(temp)
+    #pragma omp parallel num_threads(2) private(row, under_row, column, max_row, temp)
     for (row = 0; row < rows - 1; row++){ // from first row to second last row. Not parallizable 
         #pragma omp single
         {
@@ -71,11 +71,12 @@ void gaussian_elimination(){
             }
         }       
 
+        #pragma omp for
         for (under_row = row + 1; under_row < rows; under_row++){ // iterate over all under rows. Parallelizable
-            #pragma omp single
+            // #pragma omp single
             temp = G[under_row][row] / G[row][row];
 
-            #pragma omp for
+            // #pragma omp for
             for (column = row; column < columns; column++){ // iterate over the non-zero columns.
                 G[under_row][column] -= temp * G[row][column];
             }
